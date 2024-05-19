@@ -187,8 +187,8 @@ void FARMaster::Loop() {
     }
     /* Graph Updating */
     graph_manager_.UpdateNavGraph(new_nodes_, is_stop_update_, clear_nodes_);
-    runtimer_.data = FARUtil::Timer.end_time("Total V-Graph Update", is_graph_init_) / 1000.f; // Unit: second
-    // runtimer_.data = FARUtil::Timer.end_time("Total V-Graph Update", is_graph_init_); // Unit: ms
+    // runtimer_.data = FARUtil::Timer.end_time("Total V-Graph Update", is_graph_init_) / 1000.f; // Unit: second
+    runtimer_.data = FARUtil::Timer.end_time("Total V-Graph Update", is_graph_init_); // Unit: ms
     runtime_pub_.publish(runtimer_);
     /* Update v-graph in other modules */
     nav_graph_ = graph_manager_.GetNavGraph();
