@@ -51,6 +51,26 @@ Visualization Manager:
       Transport Hint: raw
       Unreliable: false
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /rviz_world_loader/markers_visual
+          Name: World
+          Namespaces:
+            ETH_HG__link__visual__visual: true
+          Queue Size: 0
+          Value: true
+        - Class: rviz/MarkerArray
+          Enabled: false
+          Marker Topic: /rviz_world_loader/markers_collision
+          Name: Collision
+          Namespaces:
+            {}
+          Queue Size: 100
+          Value: false
+      Enabled: true
+      Name: World
     - Alpha: 0.20000000298023224
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -141,7 +161,7 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
-    - Alpha: 0.20000000298023224
+    - Alpha: 0.6
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 10
@@ -255,7 +275,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_0
@@ -285,7 +305,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_1
@@ -315,7 +335,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_2
@@ -345,7 +365,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_3
@@ -375,7 +395,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_4
@@ -405,7 +425,7 @@ Visualization Manager:
         Position Transformer: XYZ
         Queue Size: 10
         Selectable: true
-        Size (Pixels): 4
+        Size (Pixels): 6
         Size (m): 0.009999999776482582
         Style: Points
         Topic: /trajectory_5
@@ -751,7 +771,7 @@ Window Geometry:
     collapsed: false
   Displays:
     collapsed: true
-  Height: 818
+  Height: 1110
   Hide Left Dock: true
   Hide Right Dock: false
   Image:
@@ -765,6 +785,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1447
+  Width: 1860
   X: 51
   Y: 27
