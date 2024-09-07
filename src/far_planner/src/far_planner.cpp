@@ -16,7 +16,8 @@ void FARMaster::Init() {
   odom_sub_           = nh.subscribe("/odom_world", 5, &FARMaster::OdomCallBack, this);
   terrain_sub_        = nh.subscribe("/terrain_cloud", 1, &FARMaster::TerrainCallBack, this);
   scan_sub_           = nh.subscribe("/scan_cloud", 5, &FARMaster::ScanCallBack, this);
-  waypoint_sub_       = nh.subscribe("/goal_point", 1, &FARMaster::WaypointCallBack, this);
+  // waypoint_sub_       = nh.subscribe("/goal_point", 1, &FARMaster::WaypointCallBack, this);
+  waypoint_sub_       = nh.subscribe("/rl_global_planner/goal", 1, &FARMaster::WaypointCallBackRL, this);
   terrain_local_sub_  = nh.subscribe("/terrain_local_cloud", 1, &FARMaster::TerrainLocalCallBack, this);
   joy_command_sub_    = nh.subscribe("/joy", 5, &FARMaster::JoyCommandCallBack, this);
   update_command_sub_ = nh.subscribe("/update_visibility_graph", 5, &FARMaster::UpdateCommandCallBack, this);
@@ -235,7 +236,9 @@ void FARMaster::Loop() {
 }
 
 void FARMaster::PlanningCallBack(const ros::TimerEvent& event) {
+  std::cout << "PlanningCallBack" << std::endl;
   if (!is_graph_init_) return;
+  std::cout << "is_graph_init_" << std::endl;
   const NavNodePtr goal_ptr = graph_planner_.GetGoalNodePtr();
   if (goal_ptr == NULL) {
     /* Graph Traversablity Update */
@@ -245,6 +248,8 @@ void FARMaster::PlanningCallBack(const ros::TimerEvent& event) {
     if (!FARUtil::IsDebug) printf("\033[2K");
     std::cout<<"    "<<"Path Search "<<"Time: "<<0.f<<"ms"<<std::endl;
   } else { 
+    Point3D node_position = goal_ptr->position;
+    std::cout << "Goal Ptr: " << node_position.x << ", " << node_position.y << ", " << node_position.z << std::endl;
     // Update goal postion with nearby terrain cloud
     const Point3D ori_p = graph_planner_.GetOriginNodePos(true);
     PointCloudPtr goal_obs(new pcl::PointCloud<PCLPoint>());
@@ -568,6 +573,7 @@ void FARMaster::OdomCallBack(const nav_msgs::OdometryConstPtr& msg) {
     FARUtil::map_origin = robot_pos_;
     map_handler_.UpdateRobotPosition(robot_pos_);
   }
+  std::cout << "Robot Pos: " << robot_pos_.x << ", " << robot_pos_.y << ", " << robot_pos_.z << std::endl;
 
   is_odom_init_ = true;
 }
@@ -684,6 +690,7 @@ void FARMaster::TerrainCallBack(const sensor_msgs::PointCloud2ConstPtr& pc) {
     scan_handler_.GridVisualCloud(scan_grid_ptr_, GridStatus::RAY);
     planner_viz_.VizPointCloud(scan_grid_debug_, scan_grid_ptr_);
   }
+  std::cout << "Terrain Call Back" << std::endl;
 }
 
 void FARMaster::ExtractDynamicObsFromScan(const PointCloudPtr& scanCloudIn, 
@@ -711,6 +718,25 @@ void FARMaster::WaypointCallBack(const geometry_msgs::PointStamped& route_goal) 
   FARUtil::Timer.start_time("Overall_executing", true);
   // visualize original goal
   planner_viz_.VizPoint3D(goal_p, "original_goal", VizColor::RED, 1.5);
+  std::cout << "Waypoint Call Back" << std::endl;
+}
+
+void FARMaster::WaypointCallBackRL(const geometry_msgs::PoseStamped& route_goal) {
+  if (!is_graph_init_) {
+    if (FARUtil::IsDebug) ROS_WARN("FARMaster: wait for v-graph to init before sending any goals");
+    return;
+  }
+  Point3D goal_p(route_goal.pose.position.x, route_goal.pose.position.y, route_goal.pose.position.z);
+  const std::string goal_frame = route_goal.header.frame_id;
+  if (!FARUtil::IsSameFrameID(goal_frame, master_params_.world_frame)) {
+    if (FARUtil::IsDebug) ROS_WARN_THROTTLE(1.0, "FARMaster: waypoint published is not on world frame!");
+    FARUtil::TransformPoint3DFrame(goal_frame, master_params_.world_frame, tf_listener_, goal_p); 
+  }
+  graph_planner_.UpdateGoal(goal_p);
+  FARUtil::Timer.start_time("Overall_executing", true);
+  // visualize original goal
+  planner_viz_.VizPoint3D(goal_p, "original_goal", VizColor::RED, 1.5);
+  std::cout << "Waypoint Call Back" << std::endl;
 }
 
 /* allocate static utility PointCloud pointer memory */

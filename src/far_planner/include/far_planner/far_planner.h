@@ -181,6 +181,7 @@ private:
 
     void ScanCallBack(const sensor_msgs::PointCloud2ConstPtr& pc);
     void WaypointCallBack(const geometry_msgs::PointStamped& route_goal);
+    void WaypointCallBackRL(const geometry_msgs::PoseStamped& route_goal);
 
     void ExtractDynamicObsFromScan(const PointCloudPtr& scanCloudIn, 
                                    const PointCloudPtr& obsCloudIn,

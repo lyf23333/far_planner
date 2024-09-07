@@ -20,7 +20,7 @@ void GoalPointTool::onInitialize()
 
 void GoalPointTool::updateTopic()
 {
-  sub_ = nh_.subscribe<nav_msgs::Odometry> ("/state_estimation", 5, &GoalPointTool::odomHandler, this);
+  sub_ = nh_.subscribe<nav_msgs::Odometry> ("/rl_global_planner/odom", 5, &GoalPointTool::odomHandler, this);
   pub_ = nh_.advertise<geometry_msgs::PointStamped>("/goal_point", 5);
   pub_joy_ = nh_.advertise<sensor_msgs::Joy>("/joy", 5);
 }
